@@ -1,0 +1,173 @@
+<html prefix="og: http://ogp.me/ns#">
+<head>
+    <title>Check DNS Korea</title>
+    <meta property="og:title" content="Check DNS Korea" />
+    <meta property="og:type" content="website" />
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.min.js"></script>
+    <style type="text/css">
+    @import url(http://fonts.googleapis.com/css?family=Lato:100);
+    * {
+        color: #101010;
+        font-family: 'Helvetica Neue', sans-serif;
+        font-weight: 100;
+        font-size: 14pt;
+        line-height: 24pt;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background: #7392E8;
+        background: linear-gradient(to bottom,  #A7DEf1 0%,#4954E0 100%);
+    }
+
+    form, div {
+        margin: 0; padding: 0;
+    }
+
+    input {
+        height: 30px;
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 0 14px 0 14px;
+        color: #101010;
+        outline: none
+    }
+
+    .pane {
+        margin: 0 auto;
+        width: 400px;
+        background-color: white;
+        padding: 16px 14px 16px 14px;
+    }
+
+    #title h1 {
+        text-align: center;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    #search {
+        background-color: #F8F8F8;
+        border: 1px solid #B7B7B7;
+        border-left: none;
+        border-right: none;
+    }
+
+    #result {
+        background-color: white;
+    }
+
+    #result .row {
+        clear: both;
+        overflow: hidden;
+        border-bottom: 1px solid #CCCCCC;
+        padding: 8px;
+    }
+
+    #result .row .k {
+        width: 230px;
+        float: left;
+    }
+
+    #result .row .name {
+        color: #007aff;
+    }
+
+    #result .row .value {
+        float: right;
+        width: 140px;
+    }
+    </style>
+</head>
+<body>
+    <div id="title" class="pane">
+        <h1>국내 DNS 서버들은 지금..</h1>
+    </div>
+    <div id="search" class="pane">
+        <form action="." method="GET">
+            <input name="domain" value="{{domain}}" placeholder="살펴볼 도메인을 넣어주세요. ex) example.com "/>
+        </form>
+    </div>
+
+    {% if domain %}
+    <div>
+        <div id="result" class="pane">
+        </div>
+
+        <script id="tpl-row" type="text/x-handlebars-template">
+            {% raw %}
+            <div class="row">
+                <div class="k">
+                    <span class="name">{{name}}</span>
+                    <span class="ip">{{ip}}</span>
+                </div>
+                <div class="v">
+                    <span class="value">Loading...</span>
+                </div>
+            </div>
+            {% endraw %}
+        </script>
+        <script type="text/javascript">
+        var domain = $("input[name=domain]").val();
+        var container = $("#result");
+        var tpl = Handlebars.compile($("#tpl-row").html());
+        var servers = [
+            {ip: '168.126.63.1'  , name: 'KT'},
+            {ip: '168.126.63.2'  , name: 'KT'},
+            {ip: '210.220.163.82', name: 'SK'},
+            {ip: '219.250.36.130', name: 'SK'},
+            {ip: '164.124.101.2' , name: 'Dacom'},
+            {ip: '203.248.252.2' , name: 'Dacom'},
+            {ip: '164.124.107.9' , name: 'Powercom'},
+            {ip: '203.248.252.2' , name: 'Powercom'},
+            {ip: '210.181.1.24'  , name: 'Dreamline'},
+            {ip: '210.181.4.25'  , name: 'Dreamline'},
+            {ip: '8.8.8.8'       , name: 'Google'},
+            {ip: '8.8.4.4'       , name: 'Google'},
+            {ip: '208.67.222.222', name: 'OpenDNS'},
+            {ip: '208.67.220.220', name: 'OpenDNS'},
+        ];
+
+        function Server(e) {
+            var self = this;
+            self.ip = e.ip;
+            self.name = e.name;
+            self.rendered = $(tpl(e));
+            self.value_view = self.rendered.find('.value');
+
+            self.load = function() {
+                $.ajax({
+                    url: '/api/lookup',
+                    data: {
+                        domain: domain,
+                        ip: self.ip
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        self.value_view.text(data['A']);
+                    },
+                    error: function(xhr, status, err) {
+                        self.value_view.text('Error..');
+                    }
+                });
+            }
+            self.append_to = function(container) {
+                container.append(self.rendered);
+            }
+        }
+
+        $(document).ready(function() {
+            $(servers).each(function(i, e) {
+                var server = new Server(e);
+                server.append_to(container);
+                server.load();
+            });
+        });
+        </script>
+    </div>
+    {% endif %}
+</body>
+</html>
