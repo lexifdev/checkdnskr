@@ -1,3 +1,4 @@
+#coding=utf8
 import webapp2
 import dns.message
 import dns.query
@@ -21,26 +22,35 @@ class MainHandler(webapp2.RequestHandler):
 
 
 class LookupHandler(webapp2.RequestHandler):
+
+    @staticmethod
+    def pick_a_record(answers):
+        for answer in answers:
+            if answer.rdtype == dns.rdatatype.A:
+                return answer
+
     def get(self):
         domain = self.request.get('domain')
         ip = self.request.get('ip')
 
         query = dns.message.make_query(domain, dns.rdatatype.A)
         received = dns.query.tcp(query, ip, 3000, 53)
-        results = received.answer[0].to_rdataset()
 
-        values = ', '.join([x.address for x in results])
+        a_record = self.pick_a_record(received.answer) # TODO : 없는경우 대비
 
-        result = json.dumps({
+        data = a_record.to_rdataset()
+        addresses = [x.address for x in data]
+
+        values  = ', '.join(addresses)
+        resp_body = json.dumps({
             'domain': domain,
             'A': values,
         })
 
-        self.response.write(result)
+        self.response.write(resp_body)
 
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/api/lookup', LookupHandler)
 ], debug=False)
-
