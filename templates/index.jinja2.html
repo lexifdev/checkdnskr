@@ -37,6 +37,39 @@
         outline: none
     }
 
+    .ribbon {
+        position: absolute;
+        top: 40px;
+        right: -45;
+        width: 200px;
+        text-align: center;
+        background-color: #FD5607;
+        -webkit-transition: all .2s ease-out;
+        -moz-transition: all .2s ease-out;
+        -o-transition: all .2s ease-out;
+        -ms-transition: all .2s ease-out;
+        transition: all .2s ease-out;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+
+    .ribbon:hover {
+        background-color: #FF8109;
+    }
+
+    .ribbon a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        color: #FEFDF8;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
     .pane {
         margin: 0 auto;
         width: 400px;
@@ -170,5 +203,8 @@
         </script>
     </div>
     {% endif %}
+    <div class="ribbon">
+        <a href="//github.com/lexifdev/checkdnskr" target="_blank">Github에 코드도 있음..</a>
+    </div>
 </body>
 </html>
