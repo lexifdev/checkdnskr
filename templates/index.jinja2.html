@@ -1,9 +1,10 @@
 <html prefix="og: http://ogp.me/ns#">
 <head>
     <title>Check DNS Korea</title>
-    <meta property="og:title" content="Check DNS Korea" />
     <meta property="og:type" content="website" />
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <meta property="og:title" content="Check DNS Korea" />
+    <meta property="og:description" content="한국의 주요 DNS서버들은 어떤 값을 반환해주고 있는지 보여주는 사이트입니다." />
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.min.js"></script>
     <style type="text/css">
     @import url(http://fonts.googleapis.com/css?family=Lato:100);
@@ -128,7 +129,7 @@
             {ip: '8.8.8.8'       , name: 'Google'},
             {ip: '8.8.4.4'       , name: 'Google'},
             {ip: '208.67.222.222', name: 'OpenDNS'},
-            {ip: '208.67.220.220', name: 'OpenDNS'},
+            {ip: '208.67.220.220', name: 'OpenDNS'}
         ];
 
         function Server(e) {
