@@ -155,59 +155,60 @@
             {% endraw %}
         </script>
         <script type="text/javascript">
-        var domain = $("input[name=domain]").val();
-        var container = $("#result");
-        var tpl = Handlebars.compile($("#tpl-row").html());
-        var servers = [
-            {ip: '168.126.63.1'  , name: 'KT'},
-            {ip: '168.126.63.2'  , name: 'KT'},
-            {ip: '210.220.163.82', name: 'SK'},
-            {ip: '219.250.36.130', name: 'SK'},
-            {ip: '164.124.101.2' , name: 'Dacom'},
-            {ip: '203.248.252.2' , name: 'Dacom'},
-            {ip: '164.124.107.9' , name: 'Powercom'},
-            {ip: '203.248.252.2' , name: 'Powercom'},
-            {ip: '210.181.1.24'  , name: 'Dreamline'},
-            {ip: '210.181.4.25'  , name: 'Dreamline'},
-            {ip: '8.8.8.8'       , name: 'Google'},
-            {ip: '8.8.4.4'       , name: 'Google'},
-            {ip: '208.67.222.222', name: 'OpenDNS'},
-            {ip: '208.67.220.220', name: 'OpenDNS'}
-        ];
-
-        function Server(e) {
-            var self = this;
-            self.ip = e.ip;
-            self.name = e.name;
-            self.rendered = $(tpl(e));
-            self.value_view = self.rendered.find('.value');
-
-            self.load = function() {
-                $.ajax({
-                    url: '/api/lookup',
-                    data: {
-                        domain: domain,
-                        ip: self.ip
-                    },
-                    dataType: 'json',
-                    success: function(data) {
-                        self.value_view.text(data['A']);
-                    },
-                    error: function(xhr, status, err) {
-                        self.value_view.text('Error..');
-                    }
-                });
-            }
-            self.append_to = function(container) {
-                container.append(self.rendered);
-            }
-        }
-
         $(document).ready(function() {
+            var Server = function(e) {
+                Server.tpl = Handlebars.compile($("#tpl-row").html());
+
+                var self = this;
+                self.ip = e.ip;
+                self.name = e.name;
+                self.rendered = $(Server.tpl(e));
+                self.value_view = self.rendered.find('.value');
+
+                self.load = function(domain) {
+                    $.ajax({
+                        url: '/api/lookup',
+                        data: {
+                            domain: domain,
+                            ip: self.ip
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            self.value_view.text(data['A']);
+                        },
+                        error: function(xhr, status, err) {
+                            self.value_view.text('Error..');
+                        }
+                    });
+                };
+
+                self.append_to = function(container) {
+                    container.append(self.rendered);
+                }
+            };
+
+            var domain = $("input[name=domain]").val();
+            var container = $("#result");
+            var servers = [
+                {ip: '168.126.63.1'  , name: 'KT'},
+                {ip: '168.126.63.2'  , name: 'KT'},
+                {ip: '210.220.163.82', name: 'SK'},
+                {ip: '219.250.36.130', name: 'SK'},
+                {ip: '164.124.101.2' , name: 'Dacom'},
+                {ip: '203.248.252.2' , name: 'Dacom'},
+                {ip: '164.124.107.9' , name: 'Powercom'},
+                {ip: '210.181.1.24'  , name: 'Dreamline'},
+                {ip: '210.181.4.25'  , name: 'Dreamline'},
+                {ip: '8.8.8.8'       , name: 'Google'},
+                {ip: '8.8.4.4'       , name: 'Google'},
+                {ip: '208.67.222.222', name: 'OpenDNS'},
+                {ip: '208.67.220.220', name: 'OpenDNS'}
+            ];
+
             $(servers).each(function(i, e) {
                 var server = new Server(e);
                 server.append_to(container);
-                server.load();
+                server.load(domain);
             });
         });
         </script>
