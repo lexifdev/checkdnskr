@@ -47,6 +47,7 @@ class LookupHandler(webapp2.RequestHandler):
             'A': values,
         })
 
+        self.response.content_type = 'application/json'
         self.response.write(resp_body)
 
 
