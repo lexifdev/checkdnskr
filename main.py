@@ -1,4 +1,3 @@
-#coding=utf8
 import webapp2
 import dns.message
 import dns.query
@@ -7,7 +6,9 @@ import os
 import json
 
 
-tpl_env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates'))) #..;
+base_dir = os.path.dirname(__file__)
+tpl_dir = os.path.join(base_dir, 'templates')
+tpl_env = jinja2.Environment(loader=jinja2.FileSystemLoader(tpl_dir))
 
 
 class MainHandler(webapp2.RequestHandler):
@@ -22,7 +23,6 @@ class MainHandler(webapp2.RequestHandler):
 
 
 class LookupHandler(webapp2.RequestHandler):
-
     @staticmethod
     def pick_a_record(answers):
         for answer in answers:
@@ -36,12 +36,12 @@ class LookupHandler(webapp2.RequestHandler):
         query = dns.message.make_query(domain, dns.rdatatype.A)
         received = dns.query.tcp(query, ip, 3000, 53)
 
-        a_record = self.pick_a_record(received.answer) # TODO : 없는경우 대비
+        a_record = self.pick_a_record(received.answer)  # TODO : 없는경우 대비
 
         data = a_record.to_rdataset()
         addresses = [x.address for x in data]
 
-        values  = ', '.join(addresses)
+        values = ', '.join(addresses)
         resp_body = json.dumps({
             'domain': domain,
             'A': values,
